@@ -1,0 +1,27 @@
+services:
+  server:
+    build:
+      context: ./server  # Points to the 'server' folder containing the Dockerfile
+      dockerfile: Dockerfile
+    volumes:
+      - ./server/secret.txt:/app/secret.txt  # Correctly formatted volume
+    ports:
+      - "5000:5000"
+
+  hacker:
+    build:
+      context: ./hacker  # Points to the 'hacker' folder containing the Dockerfile
+      dockerfile: Dockerfile
+    ports:
+      - "5001:5001"
+    depends_on:
+      - server
+
+  client:
+    build:
+      context: ./client  # Points to the 'client' folder containing the Dockerfile
+      dockerfile: Dockerfile
+    depends_on:
+      - hacker
+    environment:
+      - HACKER_URL=http://hacker:5001/data
